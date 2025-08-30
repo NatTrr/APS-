@@ -1,3 +1,12 @@
+//EXERCISE 1: From One dimensional data structures - Courses
+//We are given code in a modified programming language is given,
+// where functions are represented by an opening and closing tag
+// ("functionName" and "endfunctionName").
+// Your task is to determine whether the given code is valid.
+//Input: Code in a modified programming language, where each tag is written in a new line.
+// Tags are entered until "x" is entered.
+//Output: "Valid" if the code is valid, "Invalid" if the code is not valid.
+
 import java.util.*;
 
 // Прво ја дефинираме твојата класа стек
