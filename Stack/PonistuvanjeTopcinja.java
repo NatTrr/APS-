@@ -1,52 +1,85 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.util.*;
 
-class MmyStack<T> {
-    private LinkedList<T> list;
-
-    public MmyStack() {
-        list = new LinkedList<>();
+class myyyStack<T>
+{
+    private LinkedList<T> lista;
+    public myyyStack()
+    {
+        lista=new LinkedList<>();
     }
 
-    public void push(T item) {
-        list.addLast(item);
+    public boolean isEmpty()
+    {
+        return lista.isEmpty();
     }
 
-    public T pop() {
-        if (isEmpty()) throw new NoSuchElementException();
-        return list.removeLast();
+    public void push(T item)
+    {
+        lista.addLast(item);
     }
 
-    public T peek() {
-        if (isEmpty()) throw new NoSuchElementException();
-        return list.getLast();
+    public T pop()
+    {
+        if(isEmpty())
+        {
+            throw new EmptyStackException();
+        }
+        return lista.removeLast();
     }
 
-    public boolean isEmpty() {
-        return list.isEmpty();
+    public T peek()
+    {
+        if(isEmpty())
+        {
+            throw new EmptyStackException();
+        }
+        return lista.getLast();
     }
 
     public int size() {
-        return list.size();
+        return lista.size();
     }
 
-    public List<T> getAll() {
-        return new ArrayList<>(list);
+
+    @Override
+    public String toString() {
+        return lista.toString();
     }
+
+    public Iterable<T> elements() {
+        return lista;
+    }
+
 }
 
-public class PonistuvanjeTopcinja {
+public class PonistuvanjeTopcinja
+{
+    //Help function that will check if they are valid to cancel out
+    public static boolean canCancelOut(String chOne, String chTwo)
+    {
+        if((chOne.equals("R+") && chTwo.equals("R-")) ||
+                chOne.equals("R-") && chTwo.equals("R+")) return true;
 
-    public static boolean canCancel(String ch, String cch) {
-        return (ch.equals("R+") && cch.equals("R-")) || (ch.equals("R-") && cch.equals("R+"))
-                || (ch.equals("G+") && cch.equals("G-")) || (ch.equals("G-") && cch.equals("G+"))
-                || (ch.equals("B+") && cch.equals("B-")) || (ch.equals("B-") && cch.equals("B+"));
+        if((chOne.equals("G+") && chTwo.equals("G-")) ||
+                chOne.equals("G-") && chTwo.equals("G+")) return true;
+
+        if((chOne.equals("B+") && chTwo.equals("B-")) ||
+                chOne.equals("B-") && chTwo.equals("B+")) return true;
+
+        return false;
     }
 
-    public static String partnerInCrime(String ch) {
-        return switch (ch) {
+    //This function based on the input ball will give me the
+    //opposite one so i can check if i have the opposite
+
+    public static String opositeOfInputBall(String ch)
+    {
+        return switch (ch)
+        {
             case "R+" -> "R-";
             case "R-" -> "R+";
             case "G+" -> "G-";
@@ -57,33 +90,75 @@ public class PonistuvanjeTopcinja {
         };
     }
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String token = br.readLine();
-        String[] tokens = token.split("\\s+");
+    public static void main(String[] args) throws IOException
+    {
+        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+        String token=br.readLine();
+        String[] tokens=token.split("\\s+"); // \\s+ means split after one or more empty spaces
 
-        MmyStack<String> reds = new MmyStack<>();
-        MmyStack<String> greens = new MmyStack<>();
-        MmyStack<String> blues = new MmyStack<>();
+        myyyStack<String> reds=new myyyStack<>();
+        myyyStack<String> greens=new myyyStack<>();
+        myyyStack<String> blues=new myyyStack<>();
 
-        for (String t : tokens) {
-            if (t.charAt(0) == 'R') {
-                if (!reds.isEmpty() && canCancel(reds.peek(), t)) reds.pop();
-                else reds.push(t);
-            } else if (t.charAt(0) == 'G') {
-                if (!greens.isEmpty() && canCancel(greens.peek(), t)) greens.pop();
-                else greens.push(t);
-            } else if (t.charAt(0) == 'B') {
-                if (!blues.isEmpty() && canCancel(blues.peek(), t)) blues.pop();
-                else blues.push(t);
+        for(int i=0;i<tokens.length;i++) {
+            if (tokens[i].charAt(0) == 'R') {
+                //if the character is from the R it goes into the
+                //red domain
+                //if the red domain is empty i put it in the red stack
+
+                if (reds.isEmpty())
+                    reds.push(tokens[i]);
+
+                    //if it is not empty it means there is some ball i can
+                    //check if they cancel out with
+                else if (canCancelOut(reds.peek(), tokens[i]))
+                    reds.pop();
+                else
+                    reds.push(tokens[i]);
+            }
+
+            if (tokens[i].charAt(0) == 'G') {
+                if (greens.isEmpty())
+                    greens.push(tokens[i]);
+                else if (canCancelOut(greens.peek(), tokens[i]))
+                    greens.pop();
+                else
+                    greens.push(tokens[i]);
+            }
+
+            if (tokens[i].charAt(0) == 'B') {
+                if (blues.isEmpty())
+                    blues.push(tokens[i]);
+                else if (canCancelOut(blues.peek(), tokens[i]))
+                    blues.pop();
+                else
+                    blues.push(tokens[i]);
             }
         }
 
-        int remaining = reds.size() + greens.size() + blues.size();
-        System.out.println(remaining);
+        //System.out.println(reds);
+        // System.out.println(greens);
+        // System.out.println(blues);
 
-        for (String r : reds.getAll()) System.out.print(partnerInCrime(r) + " ");
-        for (String g : greens.getAll()) System.out.print(partnerInCrime(g) + " ");
-        for (String b : blues.getAll()) System.out.print(partnerInCrime(b) + " ");
+        int counter = reds.size() + greens.size() + blues.size();
+
+        System.out.println(counter);
+
+        for (String ball : reds.elements()) {
+            System.out.print(opositeOfInputBall(ball) + " ");
+        }
+
+        for (String ball : greens.elements()) {
+            System.out.print(opositeOfInputBall(ball) + " ");
+        }
+
+        for (String ball : blues.elements()) {
+            System.out.print(opositeOfInputBall(ball) + " ");
+        }
     }
 }
+
+
+//test : R+ R+ G- B+ B-
+//output: 3
+//R- R- G+
